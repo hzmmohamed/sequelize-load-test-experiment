@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:12-alpine3.17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - sequelize_test
+  api:
+    depends_on:
+      - db
+    build:
+      context: ./api
+      target: deploy
+    networks:
+      - sequelize_test
+
+  load_balancer:
+    depends_on:
+      - api
+    container_name: load_balancer
+    image: nginx:stable-alpine3.17
+    volumes:
+      - ./load-balancer/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - sequelize_test
+    ports:
+      - 8080:80
+
+networks:
+  sequelize_test:
