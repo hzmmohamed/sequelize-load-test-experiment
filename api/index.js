@@ -1,5 +1,5 @@
 const express = require("express");
-const { Sequelize } = require("sequelize");
+const { Sequelize, ConnectionAcquireTimeoutError } = require("sequelize");
 
 const sequelize = new Sequelize({
   dialect: "postgres",
@@ -9,10 +9,10 @@ const sequelize = new Sequelize({
   password: "postgres",
   database: "postgres",
   pool: {
-    max: 30,
-    min: 10,
+    max: 20,
+    min: 0,
     idle: 2000,
-    acquire: 30000,
+    acquire: 5000,
     maxUses: 100,
   },
 });
@@ -20,10 +20,18 @@ const sequelize = new Sequelize({
 const app = express();
 const port = 3000;
 
-app.get("/", (req, res) => {
-  sequelize.query("SELECT pg_sleep(0.5);");
+app.get("/", async (req, res) => {
+  try {
+    await sequelize.query("SELECT pg_sleep(random() * 10);");
+    res.status(200).send();
+  } catch (e) {
+    const message =
+      e instanceof ConnectionAcquireTimeoutError
+        ? { errorType: "ConnectionAcquireTimeoutError" }
+        : { errorType: "Other error" };
+    res.status(500).json(message);
+  }
   // sequelize.query("SELECT pg_sleep(random() * 3 + 0.5);");
-  res.status(200).send("Hello World");
 });
 
 app.listen(port);
