@@ -7,6 +7,8 @@ This little project is sort of a test-bench that I'll use to play with load-test
 Useful references:
 - https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/How-to-setup-an-Nginx-load-balancer-example
 - https://richyen.com/postgres/2021/09/03/less-is-more-max-connections.html
+- https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+- https://stackoverflow.com/questions/2757549/org-postgresql-util-psqlexception-fatal-sorry-too-many-clients-already
 
 
 
